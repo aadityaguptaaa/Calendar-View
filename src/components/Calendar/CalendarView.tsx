@@ -1,172 +1,145 @@
-import React, { useState } from "react";
-import {
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
-  addDays,
-  addMonths,
-  subMonths,
-  addWeeks,
-  subWeeks,
-  format,
-  isSameMonth,
-  isSameDay,
-} from "date-fns";
-import { CalendarEvent, CalendarViewProps } from "./CalendarView.types";
-import CalendarEventModal from "./EventModal";
+import React, { useEffect, useState } from "react";
+import MonthView from "./MonthView";
+import WeekView from "./WeekView";
+import EventModal from "./EventModal";
+import { useEventManager } from "../../hooks/useEventManager";
+import type { CalendarEvent } from "../../components/Calendar/CalendarView.types";
 
-const CalendarView: React.FC<CalendarViewProps> = ({
-  events = [],
-  onEventAdd,
-  onEventUpdate,
-  onEventDelete,
-  initialView = "month",
-  initialDate = new Date(),
-}) => {
-  const [currentDate, setCurrentDate] = useState(initialDate);
-  const [viewMode, setViewMode] = useState<"month" | "week">(initialView);
+
+
+const CalendarView: React.FC = () => {
+  const { events, addEvent } = useEventManager([]);
+  const [view, setView] = useState<"month" | "week">("month");
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [isModalOpen, setModalOpen] = useState(false);
-
-  const monthStart = startOfMonth(currentDate);
-  const monthEnd = endOfMonth(monthStart);
-  const startDate =
-    viewMode === "month" ? startOfWeek(monthStart) : startOfWeek(currentDate);
-  const endDate =
-    viewMode === "month"
-      ? endOfWeek(monthEnd)
-      : addDays(startDate, 6);
-
-  const handlePrev = () =>
-    setCurrentDate(
-      viewMode === "month" ? subMonths(currentDate, 1) : subWeeks(currentDate, 1)
-    );
-  const handleNext = () =>
-    setCurrentDate(
-      viewMode === "month" ? addMonths(currentDate, 1) : addWeeks(currentDate, 1)
-    );
-
-  const handleDateClick = (day: Date) => {
-    setSelectedDate(day);
-    setModalOpen(true);
-  };
-
-  const handleSaveEvent = (event: CalendarEvent) => onEventAdd(event);
-
-  // Header with animation
-  const renderHeader = () => (
-    <div className="flex justify-between items-center mb-6 animate-fadeIn">
-      <div className="flex items-center gap-2">
-        <button onClick={handlePrev} className="nav-btn">←</button>
-        <h2 className="text-2xl font-semibold text-gray-900">
-          {viewMode === "month"
-            ? format(currentDate, "MMMM yyyy")
-            : `Week of ${format(startDate, "dd MMM yyyy")}`}
-        </h2>
-        <button onClick={handleNext} className="nav-btn">→</button>
-      </div>
-
-      <div className="flex gap-2">
-        {["month", "week"].map((mode) => (
-          <button
-            key={mode}
-            onClick={() => setViewMode(mode as "month" | "week")}
-            className={`px-3 py-1 rounded-md font-medium ${
-              viewMode === mode
-                ? "bg-blue-600 text-white shadow"
-                : "bg-gray-100 hover:bg-gray-200"
-            }`}
-          >
-            {mode === "month" ? "Month" : "Week"}
-          </button>
-        ))}
-      </div>
-    </div>
+  const [showModal, setShowModal] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">(
+    localStorage.getItem("theme") === "dark" ? "dark" : "light"
   );
 
-  const renderDays = () => {
-    const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    return (
-      <div className="grid grid-cols-7 mb-2">
-        {dayLabels.map((label) => (
-          <div
-            key={label}
-            className="text-sm font-semibold text-center text-gray-700 uppercase"
-          >
-            {label}
-          </div>
-        ))}
-      </div>
-    );
-  };
+  // Sync theme with <html> and localStorage
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
-  const renderCells = () => {
-    const rows: JSX.Element[] = [];
-    let days: JSX.Element[] = [];
-    let day = startDate;
-
-    while (day <= endDate) {
-      for (let i = 0; i < 7; i++) {
-        const formattedDate = format(day, "d");
-        const isOutsideMonth = !isSameMonth(day, monthStart);
-        const isToday = isSameDay(day, new Date());
-        const isSelected = isSameDay(day, selectedDate);
-
-        const dayEvents = events.filter(
-          (evt) => evt.startDate <= day && evt.endDate >= day
-        );
-
-        days.push(
-          <div
-            key={day.toString()}
-            onClick={() => handleDateClick(day)}
-            className={`calendar-cell ${
-              isOutsideMonth && viewMode === "month"
-                ? "text-gray-400"
-                : isSelected
-                ? "bg-blue-600 text-white"
-                : "hover:bg-blue-50"
-            } ${isToday ? "border-blue-500 border" : ""}`}
-          >
-            <div className="font-medium">{formattedDate}</div>
-            {dayEvents.map((evt) => (
-              <div
-                key={evt.id}
-                className="mt-1 text-xs rounded-md px-1 truncate"
-                style={{ backgroundColor: evt.color || "#bfdbfe" }}
-              >
-                {evt.title}
-              </div>
-            ))}
-          </div>
-        );
-        day = addDays(day, 1);
-      }
-
-      rows.push(
-        <div className="grid grid-cols-7 gap-1 mb-1" key={day.toString()}>
-          {days}
-        </div>
-      );
-      days = [];
-    }
-    return <div className="animate-fadeIn">{rows}</div>;
+  const handleAdd = (title: string) => {
+    const newEvent: CalendarEvent = {
+      id: `evt-${Date.now()}`,
+      title,
+      startDate: selectedDate,
+      endDate: selectedDate,
+      color: "from-blue-400 to-indigo-500",
+    };
+    addEvent(newEvent);
+    setShowModal(false);
   };
 
   return (
-    <div className="max-w-5xl mx-auto mt-10 bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
-      {renderHeader()}
-      {renderDays()}
-      {renderCells()}
-      <CalendarEventModal
-        isOpen={isModalOpen}
-        date={selectedDate}
-        onClose={() => setModalOpen(false)}
-        onSave={handleSaveEvent}
-      />
+    <div
+      className="min-h-screen flex flex-col items-center justify-start p-10 
+                 bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-100 
+                 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 
+                 transition-all duration-500"
+    >
+      {/* Header */}
+      <header
+        className="w-full max-w-5xl flex justify-between items-center 
+                   mb-8 px-6 py-4 rounded-3xl shadow-lg
+                   bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 
+                   text-white animate-gradientMove"
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-3xl">📅</span>
+          <h1 className="text-2xl font-extrabold tracking-tight">
+            Elegant Calendar
+          </h1>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="px-4 py-2 text-sm font-semibold rounded-xl shadow-md 
+                       bg-white/20 hover:bg-white/30 backdrop-blur-md transition"
+          >
+            {theme === "dark" ? "🌞 Light Mode" : "🌙 Dark Mode"}
+          </button>
+        </div>
+      </header>
+
+      {/* Calendar Container */}
+      <main
+        className="w-full max-w-5xl p-8 rounded-3xl shadow-2xl 
+                   bg-white/80 dark:bg-gray-900/70 backdrop-blur-lg 
+                   border border-white/30 dark:border-gray-700 
+                   animate-fadeIn transition-all duration-500"
+      >
+        {/* Toolbar */}
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex gap-3">
+            <button
+              onClick={() => setView("month")}
+              className={`px-5 py-2 rounded-xl font-semibold transition 
+                ${
+                  view === "month"
+                    ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg"
+                    : "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700"
+                }`}
+            >
+              Month
+            </button>
+            <button
+              onClick={() => setView("week")}
+              className={`px-5 py-2 rounded-xl font-semibold transition 
+                ${
+                  view === "week"
+                    ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg"
+                    : "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700"
+                }`}
+            >
+              Week
+            </button>
+          </div>
+
+          <button
+            onClick={() => setShowModal(true)}
+            className="px-5 py-2 rounded-xl font-semibold 
+                       bg-gradient-to-r from-green-400 to-emerald-600 
+                       text-white shadow-lg hover:scale-105 transform transition"
+          >
+            + Add Event
+          </button>
+        </div>
+
+        {/* Calendar */}
+        <div className="transition-all duration-700 ease-in-out">
+          {view === "month" ? (
+            <MonthView
+              events={events}
+              onSelectDate={setSelectedDate}
+              selectedDate={selectedDate}
+            />
+          ) : (
+            <WeekView
+              events={events}
+              onSelectDate={setSelectedDate}
+              selectedDate={selectedDate}
+            />
+          )}
+        </div>
+
+        {/* Modal */}
+        {showModal && (
+          <EventModal onClose={() => setShowModal(false)} onAdd={handleAdd} />
+        )}
+      </main>
+
+      {/* Footer */}
+      <footer className="mt-10 text-gray-600 dark:text-gray-400 text-sm">
+        
+      </footer>
     </div>
   );
 };
 
 export default CalendarView;
+export { CalendarEvent };

@@ -1,3 +1,5 @@
+// src/components/Calendar/CalendarView.types.ts
+
 export interface CalendarEvent {
   id: string;
   title: string;

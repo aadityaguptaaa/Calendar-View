@@ -1,20 +1,18 @@
-import { useState, useCallback } from "react";
-import type { CalendarEvent } from "../components/Calendar/CalendarView";
+import { useState } from "react";
+import { CalendarEvent } from "../components/Calendar/CalendarView.types";
 
-export const useEventManager = (initial: CalendarEvent[] = []) => {
-  const [events, setEvents] = useState<CalendarEvent[]>(initial);
+export const useEventManager = (initialEvents: CalendarEvent[] = []) => {
+  const [events, setEvents] = useState<CalendarEvent[]>(initialEvents);
 
-  const addEvent = useCallback((evt: CalendarEvent) => {
-    setEvents(prev => [...prev, evt]);
-  }, []);
+  const addEvent = (event: CalendarEvent) => setEvents(prev => [...prev, event]);
 
-  const updateEvent = useCallback((id: string, updates: Partial<CalendarEvent>) => {
-    setEvents(prev => prev.map(e => (e.id === id ? { ...e, ...updates } : e)));
-  }, []);
+  const updateEvent = (id: string, updates: Partial<CalendarEvent>) =>
+    setEvents(prev =>
+      prev.map(evt => (evt.id === id ? { ...evt, ...updates } : evt))
+    );
 
-  const deleteEvent = useCallback((id: string) => {
-    setEvents(prev => prev.filter(e => e.id !== id));
-  }, []);
+  const deleteEvent = (id: string) =>
+    setEvents(prev => prev.filter(evt => evt.id !== id));
 
-  return { events, addEvent, updateEvent, deleteEvent, setEvents };
+  return { events, addEvent, updateEvent, deleteEvent };
 };

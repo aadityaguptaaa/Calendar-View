@@ -1,27 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import CalendarView from "../components/Calendar/CalendarView";
-import { sampleEvents } from "../utils/sampleData";
-import type { CalendarEvent } from "../components/Calendar/CalendarView";
 
-const App: React.FC = () => {
-  const [events, setEvents] = useState<CalendarEvent[]>(sampleEvents);
-
-  const handleAdd = (evt: CalendarEvent) => setEvents(prev => [...prev, evt]);
-  const handleUpdate = (id: string, updates: Partial<CalendarEvent>) =>
-    setEvents(prev => prev.map(e => (e.id === id ? { ...e, ...updates } : e)));
-  const handleDelete = (id: string) => setEvents(prev => prev.filter(e => e.id !== id));
-
+const App = () => {
   return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-2xl font-semibold mb-4">Calendar Component</h1>
-        <CalendarView
-          events={events}
-          onEventAdd={handleAdd}
-          onEventUpdate={handleUpdate}
-          onEventDelete={handleDelete}
-        />
-      </div>
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 transition-all">
+      <header className="w-full text-center py-6">
+        <h1 className="text-4xl font-extrabold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-lg">
+          ✨ Elegant Calendar
+        </h1>
+        <p className="text-gray-500 dark:text-gray-400 mt-2">
+          Your personal scheduling companion
+        </p>
+      </header>
+
+      <main className="w-full max-w-5xl px-4 animate-fadeIn">
+        <CalendarView />
+      </main>
+
+      <footer className="mt-8 text-sm text-gray-400">
+        <p>© {new Date().getFullYear()} Elegant Calendar — Designed by Aaditya 💎</p>
+      </footer>
     </div>
   );
 };
