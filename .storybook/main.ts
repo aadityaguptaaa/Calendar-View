@@ -1,28 +1,23 @@
 import type { StorybookConfig } from "@storybook/react-vite";
 
 const config: StorybookConfig = {
-  framework: {
-    name: "@storybook/react-vite",
-    options: {},
-  },
-  stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
+  framework: "@storybook/react-vite",
+  stories: ["../src/**/*.stories.@(js|jsx|ts|tsx|mdx)"],
   addons: [
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
     "@storybook/addon-a11y",
+    "@storybook/addon-docs",
+    "@storybook/addon-controls",
   ],
   docs: {
     autodocs: "tag",
   },
-  viteFinal: async (config) => {
-    // Tailwind alias support
-    config.resolve = {
-      ...config.resolve,
-      alias: {
-        "@": "/src",
-      },
-    };
-    return config;
+  typescript: {
+    reactDocgen: "react-docgen-typescript",
+  },
+  core: {
+    disableTelemetry: true,
   },
 };
 export default config;

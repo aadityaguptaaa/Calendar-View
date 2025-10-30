@@ -9,3 +9,14 @@
 body {
   @apply bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900;
 }
+/* Hide scrollbar globally but keep scroll functional */
+html, body {
+  overflow: auto;
+  -ms-overflow-style: none;  /* IE/Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;  /* Chrome/Safari/Opera */
+}

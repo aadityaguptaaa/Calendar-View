@@ -142,3 +142,24 @@ html {
 .animate-fadeIn {
   animation: fadeIn 0.8s ease-out;
 }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Subtle gradient background for full page */
+body {
+  @apply bg-gradient-to-br from-primary-50 via-white to-primary-100 dark:from-neutral-900 dark:via-neutral-950 dark:to-neutral-900 text-neutral-900 dark:text-neutral-100 transition-colors duration-500;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Smooth animation defaults */
+* {
+  @apply transition-all duration-200;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-neutral-400 dark:bg-neutral-700 rounded-full;
+}

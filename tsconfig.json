@@ -1,27 +1,33 @@
 {
   "compilerOptions": {
+    /* === Core Compilation Settings === */
     "target": "ES2020",
     "lib": ["DOM", "DOM.Iterable", "ES2020"],
-    "jsx": "react-jsx",                         // ✅ modern JSX transform
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "jsx": "react-jsx",
+    "module": "NodeNext",              // ✅ must match moduleResolution
+    "moduleResolution": "NodeNext",
     "baseUrl": "./src",
 
+    /* === Type Checking === */
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
 
+    /* === Module Interop === */
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
+
+    /* === Misc === */
     "resolveJsonModule": true,
     "isolatedModules": true,
     "skipLibCheck": true,
 
-    // ✅ ensures JSX namespace + React DOM types are found
+    /* === Ensure JSX + React types are included === */
     "types": ["react", "react-dom"]
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

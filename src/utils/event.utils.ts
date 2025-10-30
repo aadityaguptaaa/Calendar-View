@@ -1,42 +1,47 @@
-import type { CalendarEvent } from "../components/Calendar/CalendarView.types";
+// src/utils/event.utils.ts
+import { CalendarEvent } from "../components/Calendar/CalendarView.types";
+import { isSameDay } from "./date.utils";
 
-/**
- * Utility to create a new calendar event
- */
-export const createEvent = (opts: {
-  title: string;
-  startDate: Date;
-  endDate?: Date;
-  description?: string;
-  color?: string;
-  category?: string;
-}): CalendarEvent => ({
-  id: `evt-${Date.now()}`,
-  title: opts.title,
-  description: opts.description ?? "",
-  startDate: opts.startDate,
-  endDate: opts.endDate ?? opts.startDate,
-  color: opts.color ?? "#3b82f6", // default blue
-  category: opts.category ?? "General",
-});
+/** 🕓 Convert Date to minutes since midnight */
+const toMinutes = (d: Date): number => d.getHours() * 60 + d.getMinutes();
 
-/**
- * Update an existing event by id
- */
-export const updateEvent = (
-  events: CalendarEvent[],
-  id: string,
-  updates: Partial<CalendarEvent>
-): CalendarEvent[] => {
-  return events.map((event) =>
-    event.id === id ? { ...event, ...updates } : event
-  );
+/** ✅ Sort events by start time (earliest first) */
+export const sortEvents = (events: CalendarEvent[]): CalendarEvent[] =>
+  [...events].sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+
+/** ✅ Also export alias for WeekView backward compatibility */
+export const sortEventsByTime = sortEvents;
+
+/** ✅ Return all events that occur on a specific day */
+export const eventsForDay = (events: CalendarEvent[], day: Date): CalendarEvent[] =>
+  events.filter((e) => isSameDay(e.startDate, day));
+
+/** ✅ Alias for eventsForDay (used by MonthView) */
+export const eventsOnDay = (events: CalendarEvent[], day: Date): CalendarEvent[] =>
+  eventsForDay(events, day);
+
+/** ✅ Compute event duration in minutes */
+export const eventDurationMinutes = (evt: CalendarEvent): number =>
+  Math.max(0, Math.floor((evt.endDate.getTime() - evt.startDate.getTime()) / (1000 * 60)));
+
+/** ✅ Group events by day (YYYY-M-D) */
+export const groupEventsByDay = (events: CalendarEvent[]): Record<string, CalendarEvent[]> => {
+  const map: Record<string, CalendarEvent[]> = {};
+  events.forEach((e) => {
+    const d = e.startDate;
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    if (!map[key]) map[key] = [];
+    map[key].push(e);
+  });
+
+  // Sort each day's events
+  Object.keys(map).forEach((k) => {
+    map[k].sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+  });
+
+  return map;
 };
 
-/**
- * Delete an event by id
- */
-export const deleteEvent = (
-  events: CalendarEvent[],
-  id: string
-): CalendarEvent[] => events.filter((event) => event.id !== id);
+/** ✅ Compare events by minute precision (used in WeekView layout) */
+export const compareByStartMinute = (a: CalendarEvent, b: CalendarEvent): number =>
+  toMinutes(a.startDate) - toMinutes(b.startDate);

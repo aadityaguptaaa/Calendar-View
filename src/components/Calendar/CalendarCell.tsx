@@ -1,40 +1,103 @@
-import React, { useCallback } from "react";
-import { isSameDay } from "date-fns";
-import type { CalendarEvent } from "./CalendarView";
-import clsx from "clsx";
+// src/components/Calendar/CalendarCell.tsx
+import React from "react";
+import { CalendarEvent } from "./CalendarView.types";
+import { isSameDay } from "../../utils/date.utils";
 
-interface CellProps {
+/**
+ * 📅 CalendarCell
+ * Represents a single day cell in MonthView.
+ * Handles event display, selection, and creation.
+ */
+interface CalendarCellProps {
   date: Date;
-  isOutside: boolean;
-  isToday: boolean;
-  isSelected: boolean;
+  currentMonth: number;
+  today: Date;
+  selectedDate: Date | null;
   events: CalendarEvent[];
-  onSelect: (d: Date) => void;
+  onSelectDate: (date: Date) => void;
+  onEventClick: (event: CalendarEvent) => void;
+  onCreateEvent: (date: Date) => void;
 }
 
-export const CalendarCell: React.FC<CellProps> = React.memo(({ date, isOutside, isToday, isSelected, events, onSelect }) => {
-  const onClick = useCallback(() => onSelect(date), [date, onSelect]);
+const CalendarCell: React.FC<CalendarCellProps> = React.memo(
+  ({
+    date,
+    currentMonth,
+    today,
+    selectedDate,
+    events,
+    onSelectDate,
+    onEventClick,
+    onCreateEvent,
+  }) => {
+    const isCurrentMonth = date.getMonth() === currentMonth;
+    const isToday = isSameDay(date, today);
+    const isSelected = selectedDate ? isSameDay(date, selectedDate) : false;
 
-  return (
-    <div
-      role="button"
-      tabIndex={0}
-      onClick={onClick}
-      onKeyDown={(e) => { if (e.key === "Enter") onClick(); }}
-      aria-label={`Select ${date.toDateString()}. ${events.length} events.`}
-      className={clsx(
-        "p-3 rounded-lg select-none transition cursor-pointer focus:outline-none focus:ring-2",
-        isOutside ? "text-gray-500" : isSelected ? "bg-blue-600 text-white" : "hover:bg-blue-50 text-gray-900",
-        isToday && "border border-blue-400"
-      )}
-    >
-      <div className="text-sm">{date.getDate()}</div>
-      {events.slice(0, 2).map(evt => (
-        <div key={evt.id} className="mt-1 text-xs truncate bg-blue-100 text-blue-800 rounded px-1">
-          {evt.title}
+    const handleCellClick = () => {
+      onSelectDate(date);
+      onCreateEvent(date);
+    };
+
+    return (
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label={`${date.toDateString()} - ${events.length} events`}
+        aria-pressed={isSelected}
+        onClick={handleCellClick}
+        onKeyDown={(e) => e.key === "Enter" && handleCellClick()}
+        className={`relative border border-neutral-200 dark:border-neutral-700 p-2 h-32 cursor-pointer transition-colors select-none
+          ${
+            isCurrentMonth
+              ? "bg-white dark:bg-neutral-900 hover:bg-neutral-50 dark:hover:bg-neutral-800"
+              : "bg-neutral-100 dark:bg-neutral-800/60 text-neutral-400"
+          }
+          ${isSelected ? "ring-2 ring-primary-500 ring-offset-2" : ""}
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500
+          animate-fadeIn
+        `}
+      >
+        {/* ──────────────── Date Badge ──────────────── */}
+        <div className="flex justify-between items-start mb-1">
+          {isToday ? (
+            <span className="w-6 h-6 bg-gradient-to-r from-primary-500 to-primary-700 text-white text-xs flex items-center justify-center rounded-full shadow-sm">
+              {date.getDate()}
+            </span>
+          ) : (
+            <span className="text-sm font-medium">{date.getDate()}</span>
+          )}
         </div>
-      ))}
-      {events.length > 2 && <div className="text-xs text-blue-600 mt-1">+{events.length - 2} more</div>}
-    </div>
-  );
-});
+
+        {/* ──────────────── Events ──────────────── */}
+        <div className="space-y-1 overflow-hidden">
+          {events.slice(0, 3).map((event) => (
+            <div
+              key={event.id}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEventClick(event);
+              }}
+              className="text-xs px-2 py-0.5 rounded truncate text-white cursor-pointer hover:opacity-90 transition-opacity"
+              style={{
+                background: event.color || "linear-gradient(to right, #3b82f6, #6366f1)",
+              }}
+            >
+              {event.title}
+            </div>
+          ))}
+
+          {events.length > 3 && (
+            <div className="text-xs text-primary-600 dark:text-primary-400 truncate hover:underline cursor-pointer">
+              +{events.length - 3} more
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+);
+
+CalendarCell.displayName = "CalendarCell";
+
+export default CalendarCell;
