@@ -5,14 +5,14 @@
 A production-grade, fully responsive, and accessible **Calendar View system** built with **React + TypeScript**.  
 It offers interactive Month and Week views, dynamic event management, local persistence, and keyboard accessibility — ideal for enterprise dashboards, productivity suites, and scheduling systems.
 
----
 
-## 🌐 Live Interactive Demo
 
-🎯 **Launch Storybook Experience →**  
-Explore real-time interactions, animations, and theme transitions — directly in your browser.
 
----
+## 🌐 Live Demo
+
+[![🚀 Live App](https://img.shields.io/badge/Live%20App-Open%20Now-brightgreen?style=for-the-badge)](https://calendar-viewx.netlify.app/)
+
+
 
 ## ⚙️ Quick Start
 
