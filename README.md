@@ -16,7 +16,7 @@ Designed for seamless integration into enterprise dashboards and productivity pl
 
 ```bash
 # Clone Repository
-git clone https://github.com/yourusername/calendar-view.git
+git clone https://github.com/aadityaguptaaa/calendar-view.git
 cd calendar-view
 
 # Install dependencies
@@ -103,8 +103,8 @@ The modular structure ensures easy integration into any existing **React** ecosy
 ## 📧 Contact
 
 👤 **Aaditya Gupta**  
-📮 Email: [aaditya.workconnect@gmail.com](mailto:aaditya.workconnect@gmail.com)  
-🌐 Portfolio: [https://aadityagupta.dev](https://aadityagupta.dev)
+📮 Email: [aaditya.workconnect@gmail.com](mailto:aadityaVidit@gmail.com)  
+🌐 Portfolio: [Aadityagupta](https://aadityaguptaaa.github.io/My-Portfolio/)
 
 ---
 
