@@ -161,11 +161,11 @@ This project is released under the **MIT License** — free to use and modify fo
 ## 📧 Contact & Portfolio
 
 👤 **Aaditya Gupta**  
-📮 aaditya.workconnect@gmail.com  
+📮 aadityavidit@gmail.com  
 
-🌐 **Portfolio Website**  
+🌐 **Portfolio Website** [Aaditya Gupta](https://aadityaguptaaa.github.io/My-Portfolio/)
 💼 **GitHub:** [@aadityaguptaaa](https://github.com/aadityaguptaaa)  
-🔗 **LinkedIn:** [Aaditya Gupta](https://linkedin.com/in/aaditya-gupta)
+🔗 **LinkedIn:** [Aaditya Gupta](https://linkedin.com/in/aadityaxgupta)
 
 ---
 
