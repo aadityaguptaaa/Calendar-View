@@ -7,7 +7,6 @@ It offers interactive Month and Week views, dynamic event management, local pers
 
 
 
-
 ## 🌐 Live Demo
 
 [![🚀 Live App](https://img.shields.io/badge/Live%20App-Open%20Now-brightgreen?style=for-the-badge)](https://calendar-viewx.netlify.app/)
