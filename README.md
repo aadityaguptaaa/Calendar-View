@@ -162,7 +162,7 @@ This project is released under the **MIT License** — free to use and modify fo
 
 👤 **Aaditya Gupta**  
 📮 aadityavidit@gmail.com  
-🌐 **Portfolio Website** [Aaditya Gupta](https://aadityaguptaaa.github.io/My-Portfolio/)
+🌐 **Portfolio Website** [Aaditya Gupta](https://aadityaguptaaa.github.io/My-Portfolio/) <br>
 🔗 **LinkedIn:** [Aaditya Gupta](https://linkedin.com/in/aadityaxgupta)
 
 ---
